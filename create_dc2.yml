@@ -1,0 +1,83 @@
+---
+- name: Install domain controler
+  hosts: windows-server
+  gather_facts: false
+
+  pre_tasks:
+
+    - name: Set ip dns
+      win_dns_client:
+        adapter_names: '*'
+        ipv4_addresses:
+        - 192.168.1.68
+
+    - name: change hostname
+      win_hostname:
+        name: dc2
+      register: res
+
+    - name: Reboot
+      win_reboot:
+      when: res.reboot_required
+
+# Updates server
+
+#    - name: Update server
+#      win_updates:
+#        category_names:
+#          - Application
+#          - CriticalUpdates
+#          - DefinitionUpdates
+#          - SecurityUpdates
+#          - Updates
+#        whitelist:
+#          - KB4093120
+#      reboot: yes
+#      reboot_timeout: 420
+
+  tasks:
+
+    - name: Install AD Services feature
+      win_feature:
+        name: AD-Domain-Services
+        include_management_tools: yes
+        include_sub_features: yes
+        state: present
+      register: install_adds
+
+
+    - name: Reboot if AD DS installing  feature requires it
+      win_reboot:
+        msg: "Le serveur  a redemarré ..."
+      when: install_adds.reboot_required
+
+
+
+    - name: Create new domain and forest 
+      win_domain:
+        #create_dns_delegation: no
+        dns_domain_name: teachme.local
+        safe_mode_password: Mot2P@sseSecours!
+        domain_netbios_name: TEACH
+        #sysvol_path: C:\Windows\SYSVOL
+        #database_path: C:\Windows\NTDS
+        #create_dns_delegation: no
+      register: result_forest
+
+    - name: Reboot if installing domain  feature requires it
+      win_reboot:
+        msg: "Le serveur  a redemarré ..."
+      when: result_forest.reboot_required
+
+
+    - name: Create dc admin
+      win_domain_user:
+        name: admindc
+        password: dcP4ssw0rd
+        state: present
+        groups:
+          - Admins du domaine
+
+#  post_tasks:
+#  roles:
+#    - create_users

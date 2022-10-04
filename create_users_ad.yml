@@ -1,0 +1,30 @@
+---
+- name: Create user in dc0
+  hosts: windows-server
+  gather_facts: false
+
+  pre_tasks:
+
+    - name: create UO
+      community.windows.win_domain_ou:
+          name: "{{ item }}"
+          state: present
+      loop:
+        - INFORMATIQUE
+        - COMPTA
+        - COMMERCIAL
+    
+
+  tasks:
+    - name: Create users in active directory
+      win_domain_user:
+        name: "{{ loop_name }}"
+        firstname: "{{loop_firstname}}"
+        password: "{{loop_password}}"
+        state: present
+        domain_username: TEACHME\"{{loop_domain_username}}"
+        domain_password: "{{loop_password}}"
+        path: ou=INFORMATIQUE,dc=teachmemore,dc=lan
+        user_cannot_change_password: no
+        update_password: on_create
+        password_never_expires: no

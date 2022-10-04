@@ -1,0 +1,21 @@
+    - name: create UO
+      community.windows.win_domain_ou:
+          name: "{{ item }}"
+          state: present
+      loop:
+        - INFORMATIQUE
+        - DEP_INFO
+        - COMMERCIAL
+
+    - name: Create a new group named informatique
+      ansible.windows.win_group:
+        name: informatique
+        description: Deploy Group Informatique
+        state: present
+
+
+    - name: Create a new group DEP_INFO
+      ansible.windows.win_group:
+        name: dep_info
+        description: Deploy Group dep_info
+        state: present

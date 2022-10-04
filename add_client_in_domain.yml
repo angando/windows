@@ -1,0 +1,46 @@
+
+---
+- name: ADD CLIENTS IN DOMAINY
+  hosts: windows-clients
+  gather_facts: false
+
+  pre_tasks:
+
+#    - name: Install updates
+#      ansible.windows.win_updates:
+#        reboot: no
+#      register: upd_res
+
+#    - name: Reboot for hostname change
+#      ansible.windows.win_reboot:
+#      when: upd_res.reboot_required
+
+  tasks:
+
+    - name: Set ip dns
+      win_dns_client:
+        adapter_names: '*'
+        ipv4_addresses:
+        - 192.168.1.67
+
+    - name: change hostname
+      win_hostname:
+        name: "{{ inventory_hostname}}"
+      register: res
+
+    - name: Reboot
+      win_reboot:
+      when: res.reboot_required
+
+    - name: Promote to member
+      win_domain_membership:
+        dns_domain_name: teach.local
+        domain_admin_user: Administrateur@teach.local
+        domain_admin_password: Bonjour123$
+        state: domain
+      register: domain_state
+
+    - name: Reboot after joining
+      win_reboot:
+        msg: "Joining domain. Rebooting..."
+      when: domain_state.reboot_required

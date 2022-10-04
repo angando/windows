@@ -1,0 +1,121 @@
+---
+- name: Install domain controler
+  hosts: dc01
+  gather_facts: false
+
+  pre_tasks:
+
+#    - name: Install updates
+#      ansible.windows.win_updates:
+#        reboot: no
+#      register: upd_res
+
+#    - name: Reboot for hostname change
+#      ansible.windows.win_reboot:
+#      when: upd_res.reboot_required
+
+
+    - name: Set ip dns
+      win_dns_client:
+        adapter_names: '*'
+        ipv4_addresses:
+        - 192.168.1.67
+
+    - name: change hostname
+      win_hostname:
+        name: "{{inventory_hostname}}"
+      register: res
+
+    - name: Reboot
+      win_reboot:
+      when: res.reboot_required
+
+
+
+# Updates server
+
+#    - name: Update server
+#      win_updates:
+#        category_names:
+#          - Application
+#          - CriticalUpdates
+#          - DefinitionUpdates
+#          - SecurityUpdates
+#          - Updates
+#        whitelist:
+#          - KB4093120
+#      reboot: yes
+#      reboot_timeout: 420
+
+  tasks:
+
+    - name: Install AD Services feature
+      win_feature:
+        name: AD-Domain-Services
+        include_management_tools: yes
+        include_sub_features: yes
+        state: present
+      register: install_adds
+
+
+    - name: Reboot if AD DS installing  feature requires it
+      win_reboot:
+        msg: "Le serveur  a redemarré ..."
+      when: install_adds.reboot_required
+
+
+
+    - name: Create new domain and forest 
+      win_domain:
+        #create_dns_delegation: no
+        dns_domain_name: teach.local
+        safe_mode_password: Mot2P@sseSecours!
+#        domain_netbios_name: TEACHMEMORE
+        #sysvol_path: C:\Windows\SYSVOL
+        #database_path: C:\Windows\NTDS
+        #create_dns_delegation: no
+      register: result_forest
+
+    - name: Reboot if installing domain  feature requires it
+      win_reboot:
+        msg: "Le serveur  a redemarré ..."
+        reboot_timeout_sec: 3600
+        shutdown_timeout_sec: 3600
+      when: result_forest.reboot_required
+
+#    - name: Sleep for 30 seconds and continue with play
+#      ansible.builtin.wait_for:
+#      timeout: 30
+
+    - name: Create dc admin
+      win_domain_user:
+        name: admindc
+        password: dcP4ssw0rd
+        state: present
+        groups:
+          - Admins du domaine
+
+  post_tasks:
+
+    - name: create UO
+      community.windows.win_domain_ou:
+          name: "{{ item }}"
+          state: present
+      loop:
+        - INFORMATIQUE
+        - DEP_INFO
+        - COMMERCIAL
+
+    - name: Create a new group named informatique
+      ansible.windows.win_group:
+        name: informatique
+        description: Deploy Group Informatique
+        state: present
+
+
+    - name: Create a new group DEP_INFO
+      ansible.windows.win_group:
+        name: dep_info
+        description: Deploy Group dep_info
+        state: present
+

@@ -1,0 +1,23 @@
+loop_name:
+       - NGANDO
+       - ETAME
+       - EMANI
+       - BERTRAND
+
+loop_firstname:
+       - Armel
+       - Ninon
+       - Daniel
+       - Damien
+
+loop_password:
+       - B0bP4ssw0r1
+       - B0bP4ssw0r2
+       - B0bP4ssw0r3
+       - B0bP4ssw0r4
+
+loop_domain_username:
+       - armel.ngando
+       - ninon.etame
+       - daniel.emani
+       - damien.bertrand
