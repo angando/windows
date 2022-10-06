@@ -17,13 +17,10 @@ Vagrant.configure("2") do |config|
     windows.vm.provision "shell",
       inline: "Set-NetFirewallProfile -Profile Domain, Public, Private -Enabled False"
 
-    windows.vm.provision "ansible_local" do |ansible|
+    windows.vm.provision "ansible" do |ansible|
     
       ansible.playbook = "create_dc0.yml"
-      if File.file?     
-      (".vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory")
-      ansible.inventory_path =     
-        ".vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory"
+
     end
     end
 end
