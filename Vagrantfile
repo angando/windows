@@ -17,8 +17,8 @@ Vagrant.configure("2") do |config|
     windows.vm.provision "shell",
       inline: "Set-NetFirewallProfile -Profile Domain, Public, Private -Enabled False"
 
-    windows.vm.provision "shell",
-      inline:  "ansible-playbook -i host.ini create_dc0.yml"
+    #windows.vm.provision "shell",
+      #inline:  "/bin/shansible-playbook -i host.ini create_dc0.yml"
 
     end
 end
