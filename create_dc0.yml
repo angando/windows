@@ -93,7 +93,8 @@
         password: dcP4ssw0rd
         state: present
         groups:
-          - Admins du domaine
+#          - Admins du domaine
+           - Domain Admins
 
   post_tasks:
 
