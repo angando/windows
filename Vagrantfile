@@ -21,5 +21,4 @@ Vagrant.configure("2") do |config|
       inline:  "ansible-playbook -i host.ini create_dc0.yml"
 
     end
-  end
 end
