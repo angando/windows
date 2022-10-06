@@ -1,6 +1,6 @@
 ---
 - name: Install domain controler
-  hosts: dc03
+  hosts: dc04
   gather_facts: false
 
   pre_tasks:
