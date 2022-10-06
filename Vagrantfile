@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
     windows.vm.network "private_network", type: "static", ip: "192.168.1.5"
     windows.vm.hostname = "WinServ"
     windows.vm.provider "virtualbox" do |v|
-      v.name = "dc03"
+      v.name = "dc04"
       v.memory = 4096
       v.cpus = 2
     end
