@@ -20,7 +20,9 @@ Vagrant.configure("2") do |config|
     windows.vm.provision "ansible_local" do |ansible|
     
       ansible.playbook = "create_dc0.yml"
-      ansible.inventory_path = ".vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory"
+      ansible.install_mod = "pip"
+      ansible.pip_install_cmd = "curl https://bootstrap.pypa.io/get-pip.py | sudo python"
+      ansible.version = "3.7"
 
     end
     end
