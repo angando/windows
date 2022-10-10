@@ -19,7 +19,7 @@
       win_dns_client:
         adapter_names: '*'
         ipv4_addresses:
-        - 192.168.1.5
+        - 192.168.10.5
 
     - name: change hostname
       win_hostname:
