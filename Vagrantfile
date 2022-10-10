@@ -19,8 +19,6 @@ Vagrant.configure("2") do |config|
 
     windows.vm.provision "ansible_local" do |ansible|
     
-      ansible.playbook = "create_dc0.yml"
-
     end
     end
 end
