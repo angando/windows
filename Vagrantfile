@@ -16,8 +16,6 @@ Vagrant.configure("2") do |config|
 
     windows.vm.provision "shell",
       inline: "Set-NetFirewallProfile -Profile Domain, Public, Private -Enabled False"
-
     
-    end
     end
 end
